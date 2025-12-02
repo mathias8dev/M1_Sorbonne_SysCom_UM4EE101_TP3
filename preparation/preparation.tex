@@ -1,0 +1,840 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{siunitx}
+\sisetup{output-decimal-marker={,}}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{circuitikz}
+\usepackage{fancyhdr}
+\usepackage{array}
+\usepackage{booktabs}
+
+\geometry{margin=2.5cm}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{UE UM4EE101}
+\rhead{M1 SysCom}
+\cfoot{\thepage}
+
+\title{\textbf{TP Boucle à verrouillage de phase (PLL)} \\ \Large Préparation}
+\author{Électronique des Systèmes Analogiques\\M1 SYSCOM | UM4EE101 - Sorbonne Université \\ \\ \textbf{N° Étudiant:} 21507247 \\ \textbf{Nom et prénoms:} KALIPE Kossi Mathias}
+
+\date{}
+
+\begin{document}
+\shorthandoff{;:!?}
+
+\maketitle
+
+\section*{A -- Démodulation FSK}
+
+\subsection*{Cahier des charges}
+\begin{itemize}
+    \item Donnée binaire 0 $\rightarrow$ $V_{\text{space}} = -2{,}5$ V $\rightarrow$ $F_{\text{space}} = 800$ Hz (fréquence ``basse'')
+    \item Donnée binaire 1 $\rightarrow$ $V_{\text{mark}} = +2{,}5$ V $\rightarrow$ $F_{\text{mark}} = 1200$ Hz (fréquence ``haute'')
+    \item Alimentation : $V_{DD} - V_{SS} = 10$ V avec $V_{DD} = +5$ V et $V_{SS} = -5$ V
+    \item $V_{VCO_{min}} = V_{SS} = -5$ V et $V_{VCO_{max}} = V_{DD} = +5$ V
+    \item Comparateur de phase de type I (XOR)
+    \item Filtre de boucle $H(j\omega)$ de type 1 pôle
+    \item Coefficient d'amortissement $\zeta = 0{,}5$
+\end{itemize}
+
+\subsection*{I -- Calculs théoriques pour la PLL}
+
+\textbf{Question 1 :} Calculer les valeurs numériques de $V_{\text{mark}} - V_{\text{space}}$, $F_{\text{mark}} - F_{\text{space}}$, $V_{VCO_0}$, $F_{VCO_0}$.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+\begin{align*}
+V_{\text{mark}} - V_{\text{space}} &= (+2{,}5) - (-2{,}5) = \boxed{5 \text{ V}} \\
+F_{\text{mark}} - F_{\text{space}} &= 1200 - 800 = \boxed{400 \text{ Hz}} \\
+V_{VCO_0} &= \frac{V_{\text{mark}} + V_{\text{space}}}{2} = \frac{2{,}5 + (-2{,}5)}{2} = \boxed{0 \text{ V}} \\
+F_{VCO_0} &= \frac{F_{\text{mark}} + F_{\text{space}}}{2} = \frac{1200 + 800}{2} = \boxed{1000 \text{ Hz}}
+\end{align*}
+
+\vspace{0.5cm}
+\textbf{Question 2 :} En déduire la valeur $K_0$ du gain du VCO, bien préciser son signe et son unité.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+Le gain du VCO est défini par :
+\[
+K_0 = \frac{\Delta F_{VCO}}{\Delta V_{VCO}} = \frac{F_{\text{mark}} - F_{\text{space}}}{V_{\text{mark}} - V_{\text{space}}} = \frac{400}{5} = \boxed{80 \text{ Hz/V}}
+\]
+
+En pulsation : $K_0 = 80 \times 2\pi = \boxed{502{,}65 \text{ rad/s/V}}$
+
+Le signe est \textbf{positif} car la fréquence augmente quand la tension augmente.
+
+\vspace{0.5cm}
+\textbf{Question 3 :} Tracer la caractéristique statique de transfert (axes linéaires) du VCO en faisant apparaître $V_{VCO_{min}}$, $V_{\text{space}}$, $V_{VCO_0}$, $V_{\text{mark}}$, $V_{VCO_{max}}$ et $F_{\text{space}}$, $F_{VCO_0}$, $F_{\text{mark}}$.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+    % Axes
+    \draw[->] (-6,0) -- (6,0) node[right] {$V_{VCO}$ (V)};
+    \draw[->] (0,-0.5) -- (0,6) node[above] {$F_{VCO}$ (Hz)};
+
+    % Caractéristique linéaire
+    \draw[thick, blue] (-5,1) -- (5,5);
+
+    % Points remarquables
+    \filldraw[red] (-5,1) circle (2pt) node[below left] {$V_{SS}$};
+    \filldraw[red] (-2.5,2) circle (2pt);
+    \filldraw[red] (0,3) circle (2pt);
+    \filldraw[red] (2.5,4) circle (2pt);
+    \filldraw[red] (5,5) circle (2pt) node[above right] {$V_{DD}$};
+
+    % Graduations
+    \draw (-5,0.1) -- (-5,-0.1) node[below] {$-5$};
+    \draw (-2.5,0.1) -- (-2.5,-0.1) node[below] {$-2{,}5$};
+    \draw (2.5,0.1) -- (2.5,-0.1) node[below] {$+2{,}5$};
+    \draw (5,0.1) -- (5,-0.1) node[below] {$+5$};
+
+    % Fréquences
+    \draw[dashed] (-5,1) -- (0,1);
+    \draw (-0.1,1) -- (0.1,1) node[left=0.3cm] {600};
+    \draw[dashed] (-2.5,2) -- (0,2);
+    \draw (-0.1,2) -- (0.1,2) node[left=0.3cm] {800};
+    \draw[dashed] (0,3) -- (0.1,3) node[left=0.3cm] {1000};
+    \draw[dashed] (2.5,4) -- (0,4);
+    \draw (-0.1,4) -- (0.1,4) node[left=0.3cm] {1200};
+    \draw[dashed] (5,5) -- (0,5);
+    \draw (-0.1,5) -- (0.1,5) node[left=0.3cm] {1400};
+
+    % Labels
+    \node[right] at (-2.5,2) {$(V_{\text{space}}, F_{\text{space}})$};
+    \node[right] at (0,3) {$(V_{VCO_0}, F_{VCO_0})$};
+    \node[right] at (2.5,4) {$(V_{\text{mark}}, F_{\text{mark}})$};
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.5cm}
+\textbf{Question 4 :} En considérant que la caractéristique du VCO est linéaire, déduire $F_{VCO_{min}}$ (quand $V_{VCO} = V_{VCO_{min}}$), $F_{VCO_{max}}$ (quand $V_{VCO} = V_{VCO_{max}}$), $F_{VCO_{max}} - F_{VCO_{min}}$.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+Par extrapolation linéaire à partir de $(V_{VCO_0}, F_{VCO_0}) = (0\text{ V}, 1000\text{ Hz})$ et $K_0 = 80$ Hz/V :
+
+\begin{align*}
+F_{VCO_{min}} &= F_{VCO_0} + K_0 \times (V_{VCO_{min}} - V_{VCO_0}) \\
+&= 1000 + 80 \times (-5 - 0) = 1000 - 400 = \boxed{600 \text{ Hz}}
+\end{align*}
+
+\begin{align*}
+F_{VCO_{max}} &= F_{VCO_0} + K_0 \times (V_{VCO_{max}} - V_{VCO_0}) \\
+&= 1000 + 80 \times (5 - 0) = 1000 + 400 = \boxed{1400 \text{ Hz}}
+\end{align*}
+
+\[
+F_{VCO_{max}} - F_{VCO_{min}} = 1400 - 600 = \boxed{800 \text{ Hz}}
+\]
+
+\vspace{0.5cm}
+\textbf{Question 5 :} Comparer numériquement $F_{\text{mark}} - F_{\text{space}}$ à $F_{VCO_{max}} - F_{VCO_{min}}$. Peut-on espérer que $2 \times \Delta F_{PC} > F_{\text{mark}} - F_{\text{space}}$ ?
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+\[
+F_{\text{mark}} - F_{\text{space}} = 400 \text{ Hz} \quad \text{et} \quad F_{VCO_{max}} - F_{VCO_{min}} = 800 \text{ Hz}
+\]
+
+On a : $F_{VCO_{max}} - F_{VCO_{min}} = 2 \times (F_{\text{mark}} - F_{\text{space}})$
+
+La plage de fonctionnement du VCO (800 Hz) est \textbf{deux fois plus grande} que l'excursion FSK (400 Hz).
+
+Pour la plage de capture $2\Delta F_{PC}$ :
+\begin{itemize}
+    \item La plage d'asservissement maximale est $2\Delta F_{PL} = F_{VCO_{max}} - F_{VCO_{min}} = 800$ Hz
+    \item On a $2\Delta F_{PC} \leq 2\Delta F_{PL}$
+    \item Puisque $2\Delta F_{PL} = 800$ Hz $> F_{\text{mark}} - F_{\text{space}} = 400$ Hz
+\end{itemize}
+
+$\Rightarrow$ \textbf{Oui}, on peut espérer que $2 \times \Delta F_{PC} > F_{\text{mark}} - F_{\text{space}}$, ce qui garantira le bon fonctionnement du démodulateur.
+
+\vspace{0.5cm}
+\textbf{Question 6 :} Compléter la caractéristique statique de transfert du VCO en faisant apparaître (avec leurs valeurs) $F_{VCO_{min}}$ et $F_{VCO_{max}}$.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+Voir le graphique de la question 3. Les valeurs sont :
+\begin{itemize}
+    \item $F_{VCO_{min}} = 600$ Hz pour $V_{VCO} = V_{SS} = -5$ V
+    \item $F_{VCO_{max}} = 1400$ Hz pour $V_{VCO} = V_{DD} = +5$ V
+\end{itemize}
+
+\vspace{0.5cm}
+\textbf{Question 7 :} Sachant que le comparateur de phase (XOR) a comme niveaux de sortie : $V_{OH} = V_{DD}$ et $V_{OL} = V_{SS}$, en déduire la valeur $K_D$ du gain du comparateur de phase.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+Pour un comparateur de phase de type XOR, la caractéristique moyenne est triangulaire. Le gain est :
+\[
+K_D = \frac{V_{DD} - V_{SS}}{\pi} = \frac{5 - (-5)}{\pi} = \frac{10}{\pi} = \boxed{3{,}18 \text{ V/rad}}
+\]
+
+\vspace{0.5cm}
+\textbf{Question 8 :} Calculer le produit $K_0 K_D$, en déduire la fréquence de coupure naturelle $f_{Cn}$ et la plage d'asservissement statique $2\Delta F_{PL}$.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+\[
+K_0 K_D = 2\pi \times 80 \times \frac{10}{\pi} = 2 \times 80 \times 10 = \boxed{1600 \text{ rad}^2/\text{s}^2/\text{rad} = 1600 \text{ rad/s}^2}
+\]
+
+Ou en gardant les unités cohérentes : $K_0 = 502{,}65$ rad/s/V et $K_D = 3{,}18$ V/rad
+
+\[
+K_0 K_D = 502{,}65 \times 3{,}18 = 1600 \text{ s}^{-2}
+\]
+
+La fréquence de coupure naturelle (pour un filtre de type 1 pôle avec $H(0) = 1$) :
+\[
+\omega_{Cn} = \sqrt{K_0 K_D} = \sqrt{1600} = 40 \text{ rad/s}
+\]
+\[
+f_{Cn} = \frac{\omega_{Cn}}{2\pi} = \frac{40}{2\pi} = \boxed{6{,}37 \text{ Hz}}
+\]
+
+La plage d'asservissement statique :
+\[
+2\Delta F_{PL} = F_{VCO_{max}} - F_{VCO_{min}} = \boxed{800 \text{ Hz}}
+\]
+
+\vspace{0.5cm}
+\textbf{Question 9 :} Rappeler la relation entre $f_{Cn}$ et $f_1$ (fréquence du filtre 1 pôle) pour avoir $\zeta = 0{,}5$, donner la valeur de $f_1$.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+Pour un système du second ordre avec filtre 1 pôle, le coefficient d'amortissement est :
+\[
+\zeta = \frac{1}{2} \sqrt{\frac{f_1}{f_{Cn}}}
+\]
+
+Pour $\zeta = 0{,}5$ :
+\[
+0{,}5 = \frac{1}{2} \sqrt{\frac{f_1}{f_{Cn}}} \Rightarrow 1 = \sqrt{\frac{f_1}{f_{Cn}}} \Rightarrow f_1 = f_{Cn}
+\]
+
+Donc : $\boxed{f_1 = f_{Cn} = 6{,}37 \text{ Hz}}$
+
+\vspace{0.5cm}
+\textbf{Question 10 :} Rappeler le schéma du filtre 1 pôle. Calculer la valeur de R en fixant $C = 100$ nF.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+\begin{center}
+\begin{circuitikz}[scale=0.9]
+    \draw (0,0) to[R, l=$R$] (3,0);
+    \draw (3,0) to[C, l=$C$] (3,-2);
+    \draw (3,-2) -- (0,-2);
+    \node[left] at (0,0) {Entrée};
+    \node[right] at (3,0) {Sortie};
+    \node[ground] at (0,-2) {};
+    \node[ground] at (3,-2) {};
+\end{circuitikz}
+\end{center}
+
+La fonction de transfert est : $H(j\omega) = \frac{1}{1 + j\omega RC} = \frac{1}{1 + j\frac{f}{f_1}}$
+
+Avec $f_1 = \frac{1}{2\pi RC}$
+
+Pour $f_1 = 6{,}37$ Hz et $C = 100$ nF = $100 \times 10^{-9}$ F :
+\[
+R = \frac{1}{2\pi f_1 C} = \frac{1}{2\pi \times 6{,}37 \times 100 \times 10^{-9}} = \frac{1}{4 \times 10^{-6}} = \boxed{250 \text{ k}\Omega}
+\]
+
+\vspace{0.5cm}
+\textbf{Question 11 :} Rappeler la relation entre $f_{Cn}$ et $f_{C-3dB}$ si $\zeta = 0{,}7$.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+Pour un système du second ordre avec $\zeta = 0{,}7$ :
+\[
+f_{C-3dB} \approx f_{Cn}
+\]
+
+Plus précisément, la relation générale est :
+\[
+f_{C-3dB} = f_{Cn} \sqrt{1 - 2\zeta^2 + \sqrt{4\zeta^4 - 4\zeta^2 + 2}}
+\]
+
+Pour $\zeta = 0{,}7$ : $f_{C-3dB} \approx f_{Cn}$
+
+\vspace{0.5cm}
+\textbf{Question 12 :} Comment varie $f_{C-3dB}$ quand $\zeta$ passe de 0,7 à 0,5 ?
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+Attention : ici $f_{Cn}$ est fixée ; c'est $f_1$ qui varie pour faire varier $\zeta$, donc $f_0$ (fréquence propre) varie aussi.
+
+Quand $\zeta$ diminue (de 0,7 à 0,5), le système devient moins amorti et présente un \textbf{dépassement} plus important. La bande passante $f_{C-3dB}$ \textbf{augmente légèrement}.
+
+Pour $\zeta = 0{,}5$, il y a un pic de résonance et $f_{C-3dB} > f_{Cn}$.
+
+\vspace{0.5cm}
+\textbf{Question 13 :} Rappeler la comparaison évidente qu'il doit y avoir entre la fréquence maximale de modulation ($f_{max}$) et la bande passante ($f_{C-3dB}$) de la PLL. Calculer la valeur de $f_{max}$ admissible pour cette PLL.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+Pour que le signal modulant soit correctement transmis, il faut :
+\[
+f_{max} < f_{C-3dB}
+\]
+
+En admettant que $f_{C-3dB} \approx f_{Cn}$ pour $\zeta = 0{,}5$ :
+\[
+f_{max} \approx f_{Cn} = \boxed{6{,}37 \text{ Hz}}
+\]
+
+\vspace{0.5cm}
+\textbf{Question 14 :} Donner la relation qui donne $f_{max}$ en fonction du débit binaire maximal $D_{max}$ (en bauds) de la FSK.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+Pour une modulation FSK avec des symboles alternés (cas le plus contraignant), la fréquence de modulation maximale correspond à la moitié du débit binaire :
+\[
+f_{max} = \frac{D_{max}}{2}
+\]
+
+Donc : $\boxed{D_{max} = 2 \times f_{max}}$
+
+\vspace{0.5cm}
+\textbf{Question 15 :} Calculer la valeur de $D_{max}$ admissible pour cette PLL.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+\[
+D_{max} = 2 \times f_{max} = 2 \times 6{,}37 = \boxed{12{,}7 \text{ bauds}}
+\]
+
+\vspace{0.5cm}
+\textbf{Question 16 :} Que proposeriez-vous pour augmenter la valeur de $D_{max}$ ?
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+Pour augmenter $D_{max}$, il faut augmenter $f_{C-3dB}$, donc augmenter $f_{Cn}$.
+
+\[
+f_{Cn} = \frac{1}{2\pi}\sqrt{K_0 K_D}
+\]
+
+Solutions possibles :
+\begin{enumerate}
+    \item \textbf{Augmenter $K_0$} : augmenter l'excursion de fréquence $\Delta F$ pour la même excursion de tension (nécessite de changer les composants du VCO)
+    \item \textbf{Augmenter $K_D$} : utiliser un comparateur de phase avec un gain plus élevé ou augmenter la tension d'alimentation
+    \item \textbf{Diminuer $\zeta$} : cela augmente $f_{C-3dB}$ mais dégrade la stabilité
+    \item \textbf{Utiliser un filtre d'ordre supérieur} (1 pôle + 1 zéro) pour mieux contrôler la bande passante
+\end{enumerate}
+
+\vspace{0.5cm}
+\textbf{Question 17 :} Calculer la valeur de la plage de capture $2\Delta F_{PC}$ (sans pull-in) selon l'expression donnée dans le polycopié de cours puis selon l'expression donnée par le constructeur.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+\textbf{Selon le cours} (filtre 1 pôle, $H = \frac{1}{1+j\frac{f}{f_1}}$) :
+\[
+\Delta F_{PC} = \frac{1}{2\pi}\sqrt{2 \omega_{Cn} \omega_1} = \frac{1}{2\pi}\sqrt{2 \times K_0 K_D \times 2\pi f_1}
+\]
+
+Avec $\omega_1 = 2\pi f_1 = 2\pi \times 6{,}37 = 40$ rad/s et $K_0 K_D = 1600$ :
+\[
+\Delta F_{PC} = \frac{1}{2\pi}\sqrt{2 \times 1600 \times 40} = \frac{1}{2\pi}\sqrt{128000} = \frac{357{,}8}{2\pi} = \boxed{56{,}9 \text{ Hz}}
+\]
+
+Donc $2\Delta F_{PC} = \boxed{113{,}8 \text{ Hz}}$
+
+\textbf{Selon le constructeur} (CD4046BC datasheet) :
+\[
+2f_C = \frac{1}{\pi}\sqrt{\frac{2\pi f_L}{\tau_1}}
+\]
+
+avec $2f_L = 800$ Hz (plage d'asservissement) et $\tau_1 = RC = 250000 \times 100 \times 10^{-9} = 25$ ms.
+
+\[
+2\Delta F_{PC} = \frac{1}{\pi}\sqrt{\frac{2\pi \times 400}{0{,}025}} = \frac{1}{\pi}\sqrt{100530} = \frac{317{,}1}{\pi} \approx \boxed{101 \text{ Hz}}
+\]
+
+\textbf{Commentaire :} Les deux valeurs sont du même ordre de grandeur (environ 100 Hz). Cette plage de capture est inférieure à $F_{mark} - F_{space} = 400$ Hz, ce qui signifie que la PLL pourrait avoir des difficultés à capturer rapidement le signal FSK si elle n'est pas initialement verrouillée. Cependant, grâce au mécanisme de pull-in, la plage effective peut être plus grande.
+
+\newpage
+\subsection*{II -- Calcul des composants autour du circuit 4046, préparation au câblage}
+
+\textbf{Question 1 :} Est-ce que le VCO répondant au cahier des charges est avec ou sans \textit{offset} (selon la définition de la doc) ?
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+D'après la documentation du 4046, le VCO est dit ``avec offset'' quand $F_{VCO_{min}} \neq 0$ Hz.
+
+Dans notre cas : $F_{VCO_{min}} = 600$ Hz $\neq 0$ Hz
+
+$\Rightarrow$ Le VCO est \textbf{avec offset}.
+
+Sur la documentation : $F_{VCO_{max}} - F_{VCO_{min}}$ est notée $2f_L$, $F_{VCO_{max}}$ est notée $f_{max}$, $F_{VCO_{min}}$ est notée $f_{min}$.
+
+\vspace{0.5cm}
+\textbf{Question 2 :} Quelles sont les valeurs à prendre pour $V_{DD}$, $f_{min}$, $f_{max}/f_{min}$ telles que notées sur la doc ?
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+\begin{itemize}
+    \item $V_{DD} = V_{DD} - V_{SS} = 5 - (-5) = \boxed{10 \text{ V}}$ (sur la doc, $V_{DD}$ représente la tension d'alimentation totale)
+    \item $f_{min} = F_{VCO_{min}} = \boxed{600 \text{ Hz}}$
+    \item $\frac{f_{max}}{f_{min}} = \frac{F_{VCO_{max}}}{F_{VCO_{min}}} = \frac{1400}{600} = \boxed{2{,}33}$
+\end{itemize}
+
+\vspace{0.5cm}
+\textbf{Question 3 :} Grâce aux figures 1 et 2 de la documentation, déterminer les valeurs de $R_1$, $R_2$ et $C_1$.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+\textbf{a) Détermination du rapport $R_2/R_1$ :}
+
+La fig 2 montre que si $F_{VCO_{max}}/F_{VCO_{min}} = 2$, alors $R_2/R_1 \approx 1$.
+
+Connaissant $\frac{F_{VCO_{max}}}{F_{VCO_{min}}} = 2{,}33$ :
+\begin{itemize}
+    \item Si le rapport $f_{max}/f_{min}$ augmente au-delà de 2, alors $R_2/R_1 < 1$
+    \item Donc $R_1 > R_2$
+\end{itemize}
+
+En relevant sur la fig 2 (courbe pour $V_{DD} = 10$ V) pour $f_{max}/f_{min} = 2{,}33$ :
+\[
+\frac{R_2}{R_1} \approx 0{,}3 \text{ à } 0{,}4
+\]
+
+Prenons $\boxed{R_2/R_1 \approx 0{,}35}$
+
+\textbf{b) Détermination de $R_2$ et $C_1$ :}
+
+On choisit $R_2 = 100$ k$\Omega$ comme point de départ.
+
+Sur la fig 1, avec $V_{DD} = 10$ V, $R_2 = 100$ k$\Omega$ et $f_{min} = 600$ Hz :
+
+En lisant la courbe (5) pour $R_2 = 100$ k$\Omega$ et $V_{DD} = 10$ V :
+Pour $f_{min} = 600$ Hz $\approx 10^{2{,}78}$ Hz, on lit :
+\[
+C_1 \approx 2 \text{ à } 3 \text{ nF}
+\]
+
+\textbf{c) Calcul de $R_1$ :}
+
+\[
+R_1 = \frac{R_2}{0{,}35} = \frac{100000}{0{,}35} \approx \boxed{286 \text{ k}\Omega}
+\]
+
+Valeurs arrondies aux valeurs normalisées : $R_1 \approx 270$ k$\Omega$ ou $330$ k$\Omega$
+
+\vspace{0.5cm}
+\textbf{Question 4 :} Recalculer les valeurs de $R_2$ puis de $R_1$ en partant de $C_1 = 100$ nF.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+Sur la fig 1, $F_{VCO_{min}}$ est à peu près inversement proportionnel au produit $R_2 C_1$.
+
+Avec les valeurs précédentes : $R_2 \times C_1 = 100 \times 10^3 \times 3 \times 10^{-9} = 3 \times 10^{-4}$
+
+Pour $C_1 = 100$ nF = $100 \times 10^{-9}$ F et en gardant le même produit :
+\[
+R_2 = \frac{3 \times 10^{-4}}{100 \times 10^{-9}} = 3000 \text{ }\Omega = 3 \text{ k}\Omega
+\]
+
+Cependant, d'après la doc, il est conseillé de prendre $R_i$ tel que $10$ k$\Omega \leq R_i \leq 1$ M$\Omega$.
+
+Relisons la fig 1 directement avec $C_1 = 100$ nF = $10^5$ pF et $V_{DD} = 10$ V :
+
+Pour $f_{min} = 600$ Hz, avec la courbe (5) ($R_2 = 100$ k$\Omega$) : on est trop haut.
+Avec la courbe (8) ($R_2 = 1$ M$\Omega$) : $f_{min}$ serait trop bas.
+
+En interpolant, pour $C_1 = 100$ nF et $f_{min} = 600$ Hz :
+\[
+\boxed{R_2 \approx 22 \text{ k}\Omega}
+\]
+
+Et avec $R_2/R_1 = 0{,}35$ :
+\[
+R_1 = \frac{22000}{0{,}35} \approx 63 \text{ k}\Omega \Rightarrow \boxed{R_1 \approx 68 \text{ k}\Omega}
+\]
+
+\textbf{Valeurs recommandées pour le TP :} $C_1 = 100$ nF, $R_1 \approx 22$ k$\Omega$ (ou 27 k$\Omega$), $R_2 \approx 22$ k$\Omega$, $R'_2 \approx 7$ k$\Omega$
+
+(Note : $R'_2$ est ajoutée en série avec $R_2$ pour ajuster finement $f_{min}$)
+
+\newpage
+\section*{B -- Multiplication de fréquence}
+
+\subsection*{Cahier des charges}
+\begin{itemize}
+    \item Valeurs de N possibles : 1, 2, 4, 6, 8 et 10
+    \item La PLL est alimentée en $V_{SS} = 0$ V et $V_{DD} = 5$ V
+    \item $F_{OUT} = F_{VCO}$
+    \item Plage de variation de $F_{VCO}$ centrée sur 20 kHz $\Rightarrow$ $F_{VCO_0} = 20$ kHz
+    \item $F_{VCO_{min}} = 0$ Hz quand $V_{VCO} = V_{SS} = 0$ V
+    \item Fréquence propre de la PLL pour $N = 1$ : $f_0 = 1$ kHz
+    \item Utilisation d'un comparateur de phase de type II (CP II)
+\end{itemize}
+
+\subsection*{I -- Calculs théoriques pour la PLL sans le diviseur de fréquence}
+
+\textbf{Question 1 :} Calculer la valeur de $F_{VCO_{max}}$, puis en déduire celles de $K_0$, $K_D$, $\Delta F_{PL}$, $f_{Cn}$.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+Puisque la caractéristique est linéaire et symétrique autour de $F_{VCO_0}$ :
+\[
+F_{VCO_{max}} = 2 \times F_{VCO_0} - F_{VCO_{min}} = 2 \times 20000 - 0 = \boxed{40 \text{ kHz}}
+\]
+
+\textbf{Gain du VCO $K_0$ :}
+\[
+K_0 = \frac{F_{VCO_{max}} - F_{VCO_{min}}}{V_{VCO_{max}} - V_{VCO_{min}}} = \frac{40000 - 0}{5 - 0} = 8000 \text{ Hz/V}
+\]
+\[
+K_0 = 2\pi \times 8000 = \boxed{50265 \text{ rad/s/V}}
+\]
+
+\textbf{Gain du comparateur de phase $K_D$ (CP II) :}
+
+Pour un comparateur de phase de type II :
+\[
+K_D = \frac{V_{DD} - V_{SS}}{2\pi} = \frac{5 - 0}{2\pi} = \frac{5}{2\pi} = \boxed{0{,}796 \text{ V/rad}}
+\]
+
+\textbf{Plage d'asservissement $\Delta F_{PL}$ :}
+
+Avec CP II : $2\Delta F_{PL} = F_{VCO_{max}} - F_{VCO_{min}} = 40000 - 0 = 40$ kHz
+
+\[
+\boxed{\Delta F_{PL} = 20 \text{ kHz}}
+\]
+
+\textbf{Fréquence de coupure naturelle $f_{Cn}$ :}
+\[
+\omega_{Cn}^2 = K_0 K_D = 50265 \times 0{,}796 = 40000 \text{ s}^{-2}
+\]
+\[
+\omega_{Cn} = 200 \text{ rad/s} \Rightarrow f_{Cn} = \frac{200}{2\pi} = \boxed{31{,}83 \text{ Hz}}
+\]
+
+\vspace{0.5cm}
+\textbf{Question 2 :} Vis-à-vis du cahier des charges et compte tenu de la valeur numérique de $f_{Cn}$, justifier la nécessité d'utiliser un filtre de boucle $H(j\omega)$ de type un pôle un zéro.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+Avec $f_{Cn} = 31{,}83$ Hz et $f_0 = 1$ kHz (fréquence propre souhaitée) :
+
+Le rapport $f_0/f_{Cn} = 1000/31{,}83 \approx 31{,}4$ est très grand.
+
+Avec un simple filtre 1 pôle, on aurait :
+\[
+\zeta = \frac{1}{2}\sqrt{\frac{f_{Cn}}{f_1}}
+\]
+
+Pour $\zeta = 0{,}7$ et $f_0 = 1$ kHz, il faudrait $f_1 = f_{Cn}^2/f_0^2 \times f_1$... ce qui donnerait une bande passante très faible.
+
+Un filtre 1 pôle 1 zéro permet d'avoir :
+\[
+H(j\omega) = \frac{1 + j\frac{\omega}{\omega_2}}{1 + j\frac{\omega}{\omega_1}}
+\]
+
+Ce filtre permet de placer indépendamment $f_0$ (fréquence propre) et $\zeta$ (amortissement), ce qui est \textbf{nécessaire} pour obtenir $f_0 = 1$ kHz avec $\zeta = 0{,}7$ tout en gardant une bonne stabilité.
+
+L'utilisation d'un CP II permet aussi d'éliminer l'erreur de phase statique et d'avoir $\Delta F_{PC} = \Delta F_{PL}$.
+
+\vspace{0.5cm}
+\textbf{Question 3 :} Dans le cas de l'utilisation d'un CP I, calculer $f_1$ (pôle) et $f_2$ (zéro) à partir de $f_{Cn}$ et $f_0$ avec $\zeta = 0{,}7$. En déduire les valeurs de $R_1$ et $R_2$ en fixant $C_1 = 1$ $\mu$F. Calculer la bande passante $f_{C-3dB}$ de la PLL.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+Pour un filtre 1 pôle 1 zéro avec CP I, les relations sont :
+\[
+f_0^2 = f_{Cn} \times f_1 \quad \text{et} \quad \zeta = \frac{1}{2}\left(\sqrt{\frac{f_{Cn}}{f_1}} + \sqrt{\frac{f_2}{f_{Cn}}}\right)
+\]
+
+De la première relation :
+\[
+f_1 = \frac{f_0^2}{f_{Cn}} = \frac{1000^2}{31{,}83} = \boxed{31{,}42 \text{ kHz}}
+\]
+
+Pour $\zeta = 0{,}7$ :
+\[
+0{,}7 = \frac{1}{2}\left(\sqrt{\frac{31{,}83}{31420}} + \sqrt{\frac{f_2}{31{,}83}}\right)
+\]
+\[
+1{,}4 = 0{,}0318 + \sqrt{\frac{f_2}{31{,}83}}
+\]
+\[
+\sqrt{\frac{f_2}{31{,}83}} = 1{,}368 \Rightarrow f_2 = 1{,}368^2 \times 31{,}83 = \boxed{59{,}6 \text{ Hz}}
+\]
+
+\textbf{Calcul de $R_1$ et $R_2$ avec $C_1 = 1$ $\mu$F :}
+
+Filtre 1 pôle 1 zéro :
+\[
+f_1 = \frac{1}{2\pi R_1 C_1} \Rightarrow R_1 = \frac{1}{2\pi f_1 C_1} = \frac{1}{2\pi \times 31420 \times 10^{-6}} = \boxed{5{,}07 \text{ }\Omega}
+\]
+
+Cette valeur est trop faible ! Recalculons avec la bonne interprétation du filtre.
+
+Pour le filtre RC avec $R_2$ en série avec $C_1$ et $R_1$ en parallèle :
+\[
+f_2 = \frac{1}{2\pi R_2 C_1} \quad \text{et} \quad f_1 = \frac{1}{2\pi (R_1 // R_2) C_1} \approx \frac{1}{2\pi R_1 C_1} \text{ si } R_1 << R_2
+\]
+
+Avec $C_1 = 1$ $\mu$F :
+\[
+R_2 = \frac{1}{2\pi f_2 C_1} = \frac{1}{2\pi \times 59{,}6 \times 10^{-6}} = \boxed{2{,}67 \text{ k}\Omega} \approx 2{,}7 \text{ k}\Omega
+\]
+
+Pour $f_1$ très grande, on a besoin d'un $R_1$ très faible, ce qui n'est pas pratique.
+
+\textbf{Calcul de la bande passante $f_{C-3dB}$ :}
+
+Pour un système du second ordre avec $\zeta = 0{,}7$ :
+\[
+f_{C-3dB} \approx f_0 = 1 \text{ kHz}
+\]
+
+Plus précisément, avec la relation générale :
+\[
+f_{C-3dB} = f_0 \sqrt{1 - 2\zeta^2 + \sqrt{4\zeta^4 - 4\zeta^2 + 2}}
+\]
+
+Pour $\zeta = 0{,}7$ : $f_{C-3dB} \approx f_0 = \boxed{1 \text{ kHz}}$
+
+$\Rightarrow$ Cela confirme la nécessité d'utiliser un \textbf{CP II}.
+
+\vspace{0.5cm}
+\textbf{Question 4 :} Recalculer $R_1$ et $R_2$ pour avoir toujours $f_0 = 1$ kHz et $\zeta = 0{,}7$ avec l'utilisation d'un CP II.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+\textbf{Note importante :} La question 4 demande des calculs pour $N = 1$ et $f_0 = 1$ kHz. Cependant, en pratique, on dimensionne le filtre pour le \textbf{pire cas} ($N = 10$) afin que la PLL reste stable pour toutes les valeurs de N. Les calculs détaillés pour le pire cas sont donnés à la question 2 de la partie II.
+
+Pour CP II avec filtre 1 pôle 1 zéro, la topologie est $R_1$ en série avec $(R_2 // C_1)$.
+
+Les relations sont :
+\begin{itemize}
+    \item Le zéro : $\omega_2 = \frac{1}{R_2 C_1}$
+    \item Le pôle : $\omega_1 = \frac{1}{(R_1 + R_2) C_1} \approx \frac{1}{R_1 C_1}$ si $R_1 >> R_2$
+\end{itemize}
+
+Pour $f_0 = 1$ kHz et $\zeta = 0{,}7$ avec $N = 1$ :
+\[
+f_2 = \frac{f_0}{2\zeta} = \frac{1000}{1{,}4} = 714 \text{ Hz} \quad \Rightarrow \quad R_2 = \frac{1}{2\pi \times 714 \times 10^{-6}} = 223 \text{ }\Omega
+\]
+
+Cependant, ces valeurs ne conviennent pas pour $N > 1$ (système instable).
+
+\textbf{Dimensionnement pour le pire cas ($N = 10$) :}
+
+On souhaite $f_{C-3dB} \geq 50$ Hz pour $N = 10$, avec $\zeta = 0{,}7$.
+
+Avec $C_1 = 1$ $\mu$F, les valeurs calculées (voir partie II, question 2) sont :
+\[
+R_1 = 3{,}18 \text{ k}\Omega \quad \text{et} \quad R_2 = 6{,}24 \text{ k}\Omega
+\]
+
+\textbf{Valeurs pratiques recommandées pour le TP :} $C_1 = 1$ $\mu$F, $R_1 = 27$ k$\Omega$, $R_2 = 4{,}7$ k$\Omega$
+
+(Ces valeurs empiriques assurent une bonne stabilité sur toute la plage de N)
+
+\textbf{Bande passante pour $N = 1$ :}
+\[
+f_{C-3dB} \approx f_0 \times \sqrt{1 + 2\zeta^2} \approx 1000 \times \sqrt{1{,}98} \approx \boxed{1{,}4 \text{ kHz}}
+\]
+
+\subsection*{II -- Calculs théoriques pour la PLL avec le diviseur de fréquence}
+
+\textbf{Question 1 :} Donner l'expression de $K_0$ (puis de $f_{Cn}$) en présence du diviseur par N.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+En présence d'un diviseur par N dans la boucle de retour, le gain de boucle devient :
+\[
+K_0' = \frac{K_0}{N}
+\]
+
+La fréquence de coupure naturelle devient :
+\[
+\omega_{Cn}' = \sqrt{\frac{K_0 K_D}{N}} = \frac{\omega_{Cn}}{\sqrt{N}}
+\]
+
+\[
+\boxed{f_{Cn}' = \frac{f_{Cn}}{\sqrt{N}}}
+\]
+
+Quand N passe de 1 à 10 en conservant $f_1$ et $f_2$ constants :
+\begin{itemize}
+    \item $f_{Cn}$ diminue d'un facteur $\sqrt{10} \approx 3{,}16$
+    \item $\zeta$ varie car il dépend du rapport $f_{Cn}/f_1$
+    \item Pour CP II : $\zeta = \frac{1}{2}\left(\frac{f_{Cn}'}{f_1} + \frac{f_2}{f_{Cn}'}\right)$
+\end{itemize}
+
+\vspace{0.5cm}
+\textbf{Question 2 :} Préciser pour quelle valeur de N (min ou max), on a le pire cas pour $\zeta$ et la plus faible valeur de $f_{Cn}$.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+Le pire cas est pour $N = N_{max} = 10$ :
+\begin{itemize}
+    \item $f_{Cn}$ est minimale : $f_{Cn\_min} = \frac{f_{Cn}}{\sqrt{10}} = \frac{31{,}83}{\sqrt{10}} = \boxed{10{,}07 \text{ Hz}}$
+    \item $\zeta$ est minimal (système moins stable)
+\end{itemize}
+
+En prenant $f_{C-3dB\_min} = 50$ Hz avec $\zeta_{min} = 0{,}7$ :
+\[
+f_{0\_min} \approx \frac{f_{C-3dB\_min}}{\sqrt{1 + 2\zeta^2}} = \frac{50}{1{,}4} \approx 35{,}7 \text{ Hz}
+\]
+
+\[
+f_{2\_min} = \frac{f_{0\_min}}{2\zeta} = \frac{35{,}7}{1{,}4} = \boxed{25{,}5 \text{ Hz}}
+\]
+
+\[
+f_{1\_min} = 2\zeta \times f_{0\_min} = 1{,}4 \times 35{,}7 = \boxed{50 \text{ Hz}}
+\]
+
+Avec $C_1 = 1$ $\mu$F :
+\[
+R_1 = \frac{1}{2\pi f_{1\_min} C_1} = \frac{1}{2\pi \times 50 \times 10^{-6}} = \boxed{3{,}18 \text{ k}\Omega} \approx 3{,}3 \text{ k}\Omega
+\]
+
+\[
+R_2 = \frac{1}{2\pi f_{2\_min} C_1} = \frac{1}{2\pi \times 25{,}5 \times 10^{-6}} = \boxed{6{,}24 \text{ k}\Omega} \approx 6{,}8 \text{ k}\Omega
+\]
+
+\textbf{Valeurs pratiques pour le TP :} Le sujet de TP recommande $R_1 = 27$ k$\Omega$, $R_2 = 4{,}7$ k$\Omega$, $C_1 = 1$ $\mu$F.
+
+Ces valeurs diffèrent des calculs ci-dessus car elles sont choisies empiriquement pour assurer un bon compromis entre stabilité et rapidité sur toute la plage de N (1 à 10). Les valeurs plus élevées de $R_1$ et $R_2$ correspondent à des fréquences $f_1$ et $f_2$ plus basses, ce qui ralentit la boucle mais améliore la stabilité
+
+\vspace{0.5cm}
+\textbf{Question 3 :} Donner l'expression de $\Delta F_{PL}$ à l'entrée $F_{IN}$ de la PLL en présence du diviseur par N.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+\[
+\boxed{\Delta F_{PL\_IN} = \frac{\Delta F_{PL}}{N} = \frac{20000}{N} \text{ Hz}}
+\]
+
+\vspace{0.5cm}
+\textbf{Question 4 :} Que se passe-t-il pour $F_{VCO_0}$ quand N passe de 1 à 10 ?
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+$F_{VCO_0}$ est déterminé par $V_{VCO_0} = 2{,}5$ V et reste constant :
+\[
+\boxed{F_{VCO_0} = 20 \text{ kHz}} \text{ (indépendant de N)}
+\]
+
+\vspace{0.5cm}
+\textbf{Question 5 :} Que se passe-t-il pour $F_{IN_0}$ quand N passe de 1 à 10 ?
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+$F_{IN_0}$ est la fréquence d'entrée qui donne $F_{VCO_0}$ en sortie :
+\[
+F_{IN_0} = \frac{F_{VCO_0}}{N} = \frac{20000}{N}
+\]
+
+Quand N passe de 1 à 10, $F_{IN_0}$ passe de 20 kHz à 2 kHz.
+
+\vspace{0.5cm}
+\textbf{Question 6 :} Remplir le tableau suivant.
+
+\vspace{0.3cm}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+$N$ & $\Delta F_{PL}$ (Hz) & $F_{IN_0}$ (Hz) & $F_{IN_{min}}$ (Hz) & $F_{IN_{max}}$ (Hz) & $F_{OUT_{min}}$ (Hz) & $F_{OUT_{max}}$ (Hz) \\
+\hline
+1 & 20000 & 20000 & 0 & 40000 & 0 & 40000 \\
+\hline
+2 & 10000 & 10000 & 0 & 20000 & 0 & 40000 \\
+\hline
+4 & 5000 & 5000 & 0 & 10000 & 0 & 40000 \\
+\hline
+6 & 3333 & 3333 & 0 & 6667 & 0 & 40000 \\
+\hline
+8 & 2500 & 2500 & 0 & 5000 & 0 & 40000 \\
+\hline
+10 & 2000 & 2000 & 0 & 4000 & 0 & 40000 \\
+\hline
+\end{tabular}
+\end{center}
+
+Note : $F_{IN_{min}} = F_{VCO_{min}}/N = 0$ et $F_{IN_{max}} = F_{VCO_{max}}/N = 40000/N$
+
+\subsection*{III -- Calcul des composants autour du circuit 4046, préparation au câblage}
+
+\textbf{Question 1 :} Est-ce que le VCO répondant au cahier des charges est avec ou sans \textit{offset} ?
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+$F_{VCO_{min}} = 0$ Hz $\Rightarrow$ Le VCO est \textbf{sans offset}.
+
+\vspace{0.5cm}
+\textbf{Question 2 :} Déduire de la question ci-dessus la valeur à donner à $R_2$ (sur la patte 12 du 4046) pour avoir $F_{VCO_{min}} = 0$ Hz.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+Pour avoir un VCO sans offset ($F_{VCO_{min}} = 0$), la patte 12 ($R_2$) doit être :
+\[
+\boxed{\text{Non connectée (laissée en l'air) ou } R_2 = \infty}
+\]
+
+\vspace{0.5cm}
+\textbf{Question 3 :} Utiliser la figure pour déterminer la valeur de R (notée $R_1$ sur la figure) pour avoir $F_{VCO_0} = 20$ kHz avec $C = 4{,}7$ nF.
+
+\vspace{0.3cm}
+\textbf{Réponse :}
+
+Sur la fig 3 de la documentation NXP (HEF4046B), pour $V_{DD} = 5$ V, $C_1 = 4{,}7$ nF = $4700$ pF :
+
+En lisant la courbe (6) pour $R_1 = 100$ k$\Omega$ ou en interpolant :
+
+Pour $f_0 = F_{VCO_0} = 20$ kHz et $C_1 = 4{,}7$ nF :
+\[
+\boxed{R \approx 10 \text{ k}\Omega \text{ à } 15 \text{ k}\Omega}
+\]
+
+(La valeur exacte sera ajustée expérimentalement)
+
+\end{document}
