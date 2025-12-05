@@ -194,21 +194,21 @@ K_D = \frac{V_{DD} - V_{SS}}{\pi} = \frac{5 - (-5)}{\pi} = \frac{10}{\pi} = \box
 \textbf{Réponse :}
 
 \[
-K_0 K_D = 2\pi \times 80 \times \frac{10}{\pi} = 2 \times 80 \times 10 = \boxed{1600 \text{ rad}^2/\text{s}^2/\text{rad} = 1600 \text{ rad/s}^2}
+K_0 K_D = 2\pi \times 80 \times \frac{10}{\pi} = 2 \times 80 \times 10 = \boxed{1600 \text{ rad/s}}
 \]
 
 Ou en gardant les unités cohérentes : $K_0 = 502{,}65$ rad/s/V et $K_D = 3{,}18$ V/rad
 
 \[
-K_0 K_D = 502{,}65 \times 3{,}18 = 1600 \text{ s}^{-2}
+K_0 K_D = 502{,}65 \times 3{,}18 = 1600 \text{ rad/s}
 \]
 
 La fréquence de coupure naturelle (pour un filtre de type 1 pôle avec $H(0) = 1$) :
 \[
-\omega_{Cn} = \sqrt{K_0 K_D} = \sqrt{1600} = 40 \text{ rad/s}
+\omega_{Cn} = K_0 K_D = 1600 \text{ rad/s}
 \]
 \[
-f_{Cn} = \frac{\omega_{Cn}}{2\pi} = \frac{40}{2\pi} = \boxed{6{,}37 \text{ Hz}}
+f_{Cn} = \frac{\omega_{Cn}}{2\pi} = \frac{1600}{2\pi} = \boxed{254{,}6 \text{ Hz}}
 \]
 
 La plage d'asservissement statique :
@@ -232,7 +232,7 @@ Pour $\zeta = 0{,}5$ :
 0{,}5 = \frac{1}{2} \sqrt{\frac{f_1}{f_{Cn}}} \Rightarrow 1 = \sqrt{\frac{f_1}{f_{Cn}}} \Rightarrow f_1 = f_{Cn}
 \]
 
-Donc : $\boxed{f_1 = f_{Cn} = 6{,}37 \text{ Hz}}$
+Donc : $\boxed{f_1 = f_{Cn} = 254{,}6 \text{ Hz}}$
 
 \vspace{0.5cm}
 \textbf{Question 10 :} Rappeler le schéma du filtre 1 pôle. Calculer la valeur de R en fixant $C = 100$ nF.
@@ -256,9 +256,9 @@ La fonction de transfert est : $H(j\omega) = \frac{1}{1 + j\omega RC} = \frac{1}
 
 Avec $f_1 = \frac{1}{2\pi RC}$
 
-Pour $f_1 = 6{,}37$ Hz et $C = 100$ nF = $100 \times 10^{-9}$ F :
+Pour $f_1 = 254{,}6$ Hz et $C = 100$ nF = $100 \times 10^{-9}$ F :
 \[
-R = \frac{1}{2\pi f_1 C} = \frac{1}{2\pi \times 6{,}37 \times 100 \times 10^{-9}} = \frac{1}{4 \times 10^{-6}} = \boxed{250 \text{ k}\Omega}
+R = \frac{1}{2\pi f_1 C} = \frac{1}{2\pi \times 254{,}6 \times 100 \times 10^{-9}} = \frac{1}{1{,}6 \times 10^{-4}} = \boxed{6{,}25 \text{ k}\Omega}
 \]
 
 \vspace{0.5cm}
@@ -304,7 +304,7 @@ f_{max} < f_{C-3dB}
 
 En admettant que $f_{C-3dB} \approx f_{Cn}$ pour $\zeta = 0{,}5$ :
 \[
-f_{max} \approx f_{Cn} = \boxed{6{,}37 \text{ Hz}}
+f_{max} \approx f_{Cn} = \boxed{254{,}6 \text{ Hz}}
 \]
 
 \vspace{0.5cm}
@@ -326,7 +326,7 @@ Donc : $\boxed{D_{max} = 2 \times f_{max}}$
 \vspace{0.3cm}
 \textbf{Réponse :}
 \[
-D_{max} = 2 \times f_{max} = 2 \times 6{,}37 = \boxed{12{,}7 \text{ bauds}}
+D_{max} = 2 \times f_{max} = 2 \times 254{,}6 = \boxed{509{,}2 \text{ bauds}}
 \]
 
 \vspace{0.5cm}
@@ -338,7 +338,7 @@ D_{max} = 2 \times f_{max} = 2 \times 6{,}37 = \boxed{12{,}7 \text{ bauds}}
 Pour augmenter $D_{max}$, il faut augmenter $f_{C-3dB}$, donc augmenter $f_{Cn}$.
 
 \[
-f_{Cn} = \frac{1}{2\pi}\sqrt{K_0 K_D}
+f_{Cn} = \frac{\omega_{Cn}}{2\pi} = \frac{K_0 K_D}{2\pi}
 \]
 
 Solutions possibles :
@@ -360,25 +360,25 @@ Solutions possibles :
 \Delta F_{PC} = \frac{1}{2\pi}\sqrt{2 \omega_{Cn} \omega_1} = \frac{1}{2\pi}\sqrt{2 \times K_0 K_D \times 2\pi f_1}
 \]
 
-Avec $\omega_1 = 2\pi f_1 = 2\pi \times 6{,}37 = 40$ rad/s et $K_0 K_D = 1600$ :
+Avec $\omega_1 = 2\pi f_1 = 2\pi \times 254{,}6 = 1600$ rad/s et $\omega_{Cn} = K_0 K_D = 1600$ rad/s :
 \[
-\Delta F_{PC} = \frac{1}{2\pi}\sqrt{2 \times 1600 \times 40} = \frac{1}{2\pi}\sqrt{128000} = \frac{357{,}8}{2\pi} = \boxed{56{,}9 \text{ Hz}}
+\Delta F_{PC} = \frac{1}{2\pi}\sqrt{2 \omega_{Cn} \omega_1} = \frac{1}{2\pi}\sqrt{2 \times 1600 \times 1600} = \frac{1}{2\pi}\sqrt{5{,}12 \times 10^6} = \frac{2263}{2\pi} = \boxed{360 \text{ Hz}}
 \]
 
-Donc $2\Delta F_{PC} = \boxed{113{,}8 \text{ Hz}}$
+Donc $2\Delta F_{PC} = \boxed{720 \text{ Hz}}$
 
 \textbf{Selon le constructeur} (CD4046BC datasheet) :
 \[
 2f_C = \frac{1}{\pi}\sqrt{\frac{2\pi f_L}{\tau_1}}
 \]
 
-avec $2f_L = 800$ Hz (plage d'asservissement) et $\tau_1 = RC = 250000 \times 100 \times 10^{-9} = 25$ ms.
+avec $2f_L = 800$ Hz (plage d'asservissement) et $\tau_1 = RC = 6250 \times 100 \times 10^{-9} = 0{,}625$ ms.
 
 \[
-2\Delta F_{PC} = \frac{1}{\pi}\sqrt{\frac{2\pi \times 400}{0{,}025}} = \frac{1}{\pi}\sqrt{100530} = \frac{317{,}1}{\pi} \approx \boxed{101 \text{ Hz}}
+2\Delta F_{PC} = \frac{1}{\pi}\sqrt{\frac{2\pi \times 400}{0{,}000625}} = \frac{1}{\pi}\sqrt{4{,}02 \times 10^6} = \frac{2005}{\pi} \approx \boxed{638 \text{ Hz}}
 \]
 
-\textbf{Commentaire :} Les deux valeurs sont du même ordre de grandeur (environ 100 Hz). Cette plage de capture est inférieure à $F_{mark} - F_{space} = 400$ Hz, ce qui signifie que la PLL pourrait avoir des difficultés à capturer rapidement le signal FSK si elle n'est pas initialement verrouillée. Cependant, grâce au mécanisme de pull-in, la plage effective peut être plus grande.
+\textbf{Commentaire :} Les deux valeurs sont du même ordre de grandeur (environ 600-700 Hz). Cette plage de capture est supérieure à $F_{mark} - F_{space} = 400$ Hz, ce qui garantit un bon fonctionnement du démodulateur FSK.
 
 \newpage
 \subsection*{II -- Calcul des composants autour du circuit 4046, préparation au câblage}
@@ -426,10 +426,10 @@ Connaissant $\frac{F_{VCO_{max}}}{F_{VCO_{min}}} = 2{,}33$ :
 
 En relevant sur la fig 2 (courbe pour $V_{DD} = 10$ V) pour $f_{max}/f_{min} = 2{,}33$ :
 \[
-\frac{R_2}{R_1} \approx 0{,}3 \text{ à } 0{,}4
+\frac{R_2}{R_1} \approx 0{,}5
 \]
 
-Prenons $\boxed{R_2/R_1 \approx 0{,}35}$
+Prenons $\boxed{R_2/R_1 \approx 0{,}5}$
 
 \textbf{b) Détermination de $R_2$ et $C_1$ :}
 
@@ -446,10 +446,10 @@ C_1 \approx 2 \text{ à } 3 \text{ nF}
 \textbf{c) Calcul de $R_1$ :}
 
 \[
-R_1 = \frac{R_2}{0{,}35} = \frac{100000}{0{,}35} \approx \boxed{286 \text{ k}\Omega}
+R_1 = \frac{R_2}{0{,}5} = \frac{100000}{0{,}5} = \boxed{200 \text{ k}\Omega}
 \]
 
-Valeurs arrondies aux valeurs normalisées : $R_1 \approx 270$ k$\Omega$ ou $330$ k$\Omega$
+Valeur normalisée : $R_1 \approx 220$ k$\Omega$
 
 \vspace{0.5cm}
 \textbf{Question 4 :} Recalculer les valeurs de $R_2$ puis de $R_1$ en partant de $C_1 = 100$ nF.
@@ -478,14 +478,14 @@ En interpolant, pour $C_1 = 100$ nF et $f_{min} = 600$ Hz :
 \boxed{R_2 \approx 22 \text{ k}\Omega}
 \]
 
-Et avec $R_2/R_1 = 0{,}35$ :
+Et avec $R_2/R_1 = 0{,}5$ :
 \[
-R_1 = \frac{22000}{0{,}35} \approx 63 \text{ k}\Omega \Rightarrow \boxed{R_1 \approx 68 \text{ k}\Omega}
+R_1 = \frac{R_2}{0{,}5} = \frac{22000}{0{,}5} = 44 \text{ k}\Omega \Rightarrow \boxed{R_1 \approx 47 \text{ k}\Omega}
 \]
 
-\textbf{Valeurs recommandées pour le TP :} $C_1 = 100$ nF, $R_1 \approx 22$ k$\Omega$ (ou 27 k$\Omega$), $R_2 \approx 22$ k$\Omega$, $R'_2 \approx 7$ k$\Omega$
+\textbf{Valeurs recommandées pour le TP :} $C_1 = 100$ nF, $R_1 \approx 47$ k$\Omega$ (valeur normalisée), $R_2 \approx 22$ k$\Omega$
 
-(Note : $R'_2$ est ajoutée en série avec $R_2$ pour ajuster finement $f_{min}$)
+(Note : Une résistance ajustable $R'_2$ peut être ajoutée en série avec $R_2$ pour ajuster finement $f_{min}$)
 
 \newpage
 \section*{B -- Multiplication de fréquence}
@@ -538,10 +538,10 @@ Avec CP II : $2\Delta F_{PL} = F_{VCO_{max}} - F_{VCO_{min}} = 40000 - 0 = 40$ k
 
 \textbf{Fréquence de coupure naturelle $f_{Cn}$ :}
 \[
-\omega_{Cn}^2 = K_0 K_D = 50265 \times 0{,}796 = 40000 \text{ s}^{-2}
+\omega_{Cn} = K_0 K_D = 50265 \times 0{,}796 = 40000 \text{ rad/s}
 \]
 \[
-\omega_{Cn} = 200 \text{ rad/s} \Rightarrow f_{Cn} = \frac{200}{2\pi} = \boxed{31{,}83 \text{ Hz}}
+f_{Cn} = \frac{\omega_{Cn}}{2\pi} = \frac{40000}{2\pi} = \boxed{6366 \text{ Hz}}
 \]
 
 \vspace{0.5cm}
@@ -550,9 +550,9 @@ Avec CP II : $2\Delta F_{PL} = F_{VCO_{max}} - F_{VCO_{min}} = 40000 - 0 = 40$ k
 \vspace{0.3cm}
 \textbf{Réponse :}
 
-Avec $f_{Cn} = 31{,}83$ Hz et $f_0 = 1$ kHz (fréquence propre souhaitée) :
+Avec $f_{Cn} = 6366$ Hz et $f_0 = 1$ kHz (fréquence propre souhaitée) :
 
-Le rapport $f_0/f_{Cn} = 1000/31{,}83 \approx 31{,}4$ est très grand.
+Le rapport $f_{Cn}/f_0 = 6366/1000 \approx 6{,}4$ montre que $f_{Cn} > f_0$.
 
 Avec un simple filtre 1 pôle, on aurait :
 \[
@@ -583,40 +583,22 @@ f_0^2 = f_{Cn} \times f_1 \quad \text{et} \quad \zeta = \frac{1}{2}\left(\sqrt{\
 
 De la première relation :
 \[
-f_1 = \frac{f_0^2}{f_{Cn}} = \frac{1000^2}{31{,}83} = \boxed{31{,}42 \text{ kHz}}
+f_1 = \frac{f_0^2}{f_{Cn}} = \frac{1000^2}{6366} = \boxed{157 \text{ Hz}}
 \]
 
 Pour $\zeta = 0{,}7$ :
 \[
-0{,}7 = \frac{1}{2}\left(\sqrt{\frac{31{,}83}{31420}} + \sqrt{\frac{f_2}{31{,}83}}\right)
+0{,}7 = \frac{1}{2}\left(\sqrt{\frac{f_{Cn}}{f_1}} + \sqrt{\frac{f_2}{f_{Cn}}}\right) = \frac{1}{2}\left(\sqrt{\frac{6366}{157}} + \sqrt{\frac{f_2}{6366}}\right)
 \]
 \[
-1{,}4 = 0{,}0318 + \sqrt{\frac{f_2}{31{,}83}}
-\]
-\[
-\sqrt{\frac{f_2}{31{,}83}} = 1{,}368 \Rightarrow f_2 = 1{,}368^2 \times 31{,}83 = \boxed{59{,}6 \text{ Hz}}
+1{,}4 = 6{,}37 + \sqrt{\frac{f_2}{6366}}
 \]
 
-\textbf{Calcul de $R_1$ et $R_2$ avec $C_1 = 1$ $\mu$F :}
+On obtient une valeur négative sous la racine, ce qui est impossible !
 
-Filtre 1 pôle 1 zéro :
-\[
-f_1 = \frac{1}{2\pi R_1 C_1} \Rightarrow R_1 = \frac{1}{2\pi f_1 C_1} = \frac{1}{2\pi \times 31420 \times 10^{-6}} = \boxed{5{,}07 \text{ }\Omega}
-\]
+\textbf{Conclusion :} Avec CP I et un filtre 1 pôle 1 zéro, il n'est pas possible d'obtenir $f_0 = 1$ kHz et $\zeta = 0{,}7$ car $f_{Cn} >> f_0$. Le terme $\sqrt{f_{Cn}/f_1}$ est déjà supérieur à $2\zeta = 1{,}4$.
 
-Cette valeur est trop faible ! Recalculons avec la bonne interprétation du filtre.
-
-Pour le filtre RC avec $R_2$ en série avec $C_1$ et $R_1$ en parallèle :
-\[
-f_2 = \frac{1}{2\pi R_2 C_1} \quad \text{et} \quad f_1 = \frac{1}{2\pi (R_1 // R_2) C_1} \approx \frac{1}{2\pi R_1 C_1} \text{ si } R_1 << R_2
-\]
-
-Avec $C_1 = 1$ $\mu$F :
-\[
-R_2 = \frac{1}{2\pi f_2 C_1} = \frac{1}{2\pi \times 59{,}6 \times 10^{-6}} = \boxed{2{,}67 \text{ k}\Omega} \approx 2{,}7 \text{ k}\Omega
-\]
-
-Pour $f_1$ très grande, on a besoin d'un $R_1$ très faible, ce qui n'est pas pratique.
+Cela confirme la nécessité d'utiliser un \textbf{CP II}.
 
 \textbf{Calcul de la bande passante $f_{C-3dB}$ :}
 
@@ -682,14 +664,40 @@ f_{C-3dB} \approx f_0 \times \sqrt{1 + 2\zeta^2} \approx 1000 \times \sqrt{1{,}9
 \vspace{0.3cm}
 \textbf{Réponse :}
 
-En présence d'un diviseur par N dans la boucle de retour, le gain de boucle devient :
+En présence d'un diviseur par N dans la boucle de retour, le \textbf{gain de boucle} est divisé par N :
 \[
-K_0' = \frac{K_0}{N}
+K_{boucle}' = \frac{K_0 K_D}{N}
 \]
 
-La fréquence de coupure naturelle devient :
+\textbf{Remarque importante :} Il faut distinguer deux cas selon l'ordre du système.
+
+\underline{Cas du 1\textsuperscript{er} ordre (gain de boucle brut, sans filtre) :}
+
+La pulsation de coupure est linéaire en $K_{boucle}$ :
 \[
-\omega_{Cn}' = \sqrt{\frac{K_0 K_D}{N}} = \frac{\omega_{Cn}}{\sqrt{N}}
+\omega_c = K_0 K_D \quad \Rightarrow \quad \omega_c' = \frac{K_0 K_D}{N}
+\]
+
+\underline{Cas du 2\textsuperscript{nd} ordre (avec filtre passe-bas) :}
+
+Dès qu'on introduit un filtre (nécessaire pour régler $\zeta$ et la stabilité), le système devient du 2\textsuperscript{nd} ordre. L'équation caractéristique est :
+\[
+p^2 + 2\zeta\omega_n p + \omega_n^2 = 0
+\]
+
+Le terme $\omega_n^2$ est proportionnel au gain de boucle divisé par la constante de temps du filtre :
+\[
+\omega_n^2 = \frac{K_{boucle}}{\tau} \quad \Rightarrow \quad \omega_n = \sqrt{\frac{K_{boucle}}{\tau}}
+\]
+
+Avec le diviseur par N :
+\[
+\omega_n'(N) = \sqrt{\frac{K_{boucle}/N}{\tau}} = \frac{\omega_n}{\sqrt{N}}
+\]
+
+\textbf{Dans notre cas (système du 2\textsuperscript{nd} ordre avec filtre 1 pôle 1 zéro) :}
+\[
+\omega_{Cn}' = \sqrt{\frac{K_0 K_D \cdot \omega_1}{N}} = \frac{\omega_{Cn}}{\sqrt{N}}
 \]
 
 \[
@@ -698,7 +706,7 @@ La fréquence de coupure naturelle devient :
 
 Quand N passe de 1 à 10 en conservant $f_1$ et $f_2$ constants :
 \begin{itemize}
-    \item $f_{Cn}$ diminue d'un facteur $\sqrt{10} \approx 3{,}16$
+    \item La fréquence propre $f_{Cn}$ diminue d'un facteur $\sqrt{10} \approx 3{,}16$
     \item $\zeta$ varie car il dépend du rapport $f_{Cn}/f_1$
     \item Pour CP II : $\zeta = \frac{1}{2}\left(\frac{f_{Cn}'}{f_1} + \frac{f_2}{f_{Cn}'}\right)$
 \end{itemize}
@@ -711,7 +719,7 @@ Quand N passe de 1 à 10 en conservant $f_1$ et $f_2$ constants :
 
 Le pire cas est pour $N = N_{max} = 10$ :
 \begin{itemize}
-    \item $f_{Cn}$ est minimale : $f_{Cn\_min} = \frac{f_{Cn}}{\sqrt{10}} = \frac{31{,}83}{\sqrt{10}} = \boxed{10{,}07 \text{ Hz}}$
+    \item $f_{Cn}$ est minimale : $f_{Cn\_min} = \frac{f_{Cn}}{\sqrt{N}} = \frac{6366}{\sqrt{10}} = \boxed{2013 \text{ Hz}}$
     \item $\zeta$ est minimal (système moins stable)
 \end{itemize}
 
